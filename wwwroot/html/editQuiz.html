@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Quiz</title>
+    <link rel="stylesheet" href="../css/editQuiz.css">
+</head>
+<body>
+
+<!-- Multiple-choice form -->
+<form id="multiple-choice-form" style="display: none;">
+    <label for="description-mc">Question Description:</label>
+    <textarea id="description-mc" name="description" required></textarea>
+
+    <label for="correct-answer">Correct Answer:</label>
+    <input type="text" id="correct-answer" placeholder="Correct Answer" required>
+
+    <label for="incorrect-answer-1">Incorrect Answers:</label>
+    <input type="text" id="incorrect-answer-1" placeholder="Incorrect Answer 1" required>
+    <input type="text" id="incorrect-answer-2" placeholder="Incorrect Answer 2" required>
+    <input type="text" id="incorrect-answer-3" placeholder="Incorrect Answer 3" required>
+
+    <button type="submit" class="btn">Save Changes</button>
+    <button type="button" id="cancel-btn" class="btn">Cancel</button>
+</form>
+
+<!-- True/false form -->
+<form id="true-false-form" style="display: none;">
+    <label for="description-tf">Question Description:</label>
+    <textarea id="description-tf" name="description" required></textarea>
+
+    <label>True/False:</label>
+    <select id="true-false-answer" required>
+        <option value="true">True</option>
+        <option value="false">False</option>
+    </select>
+
+    <button type="submit" class="btn">Save Changes</button>
+    <button type="button" id="cancel-btn-tf" class="btn">Cancel</button>
+</form>
+</body>
+<script src="../js/editQuiz.js"></script>
+</html>

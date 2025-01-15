@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add New Quiz</title>
+    <link rel="stylesheet" href="../css/addQuiz.css">
+</head>
+<body>
+<div class="form-container">
+    <h1>Add New Quiz For This Category</h1>
+    <form id="add-quiz-form">
+        <label for="question-type">Question Type</label>
+        <select id="question-type" name="question-type" required>
+            <option value="multiple-choice">Multiple Choice</option>
+            <option value="true-false">True/False</option>
+        </select>
+
+        <label for="description">Question Description</label>
+        <textarea id="description" name="description" rows="4" required></textarea>
+
+        <div id="multiple-choice-options" class="options-container">
+            <label>Option 1 (Correct Answer)</label>
+            <input type="text" id="correct-answer" name="correct-answer" required>
+
+            <label>Option 2 (Incorrect)</label>
+            <input type="text" id="incorrect-answer-1" name="incorrect-answer-1" required>
+
+            <label>Option 3 (Incorrect)</label>
+            <input type="text" id="incorrect-answer-2" name="incorrect-answer-2" required>
+
+            <label>Option 4 (Incorrect)</label>
+            <input type="text" id="incorrect-answer-3" name="incorrect-answer-3" required>
+        </div>
+
+        <div id="true-false-options" class="options-container" style="display: none;">
+            <label>Correct Answer</label>
+            <select id="true-false-answer" name="true-false-answer">
+                <option value="true">True</option>
+                <option value="false">False</option>
+            </select>
+        </div>
+
+        <button type="submit" class="submit-btn">Submit</button>
+        <button type="button" class="cancel-btn" id="cancel-btn">Cancel</button>
+    </form>
+</div>
+
+<script src="../js/addQuiz.js"></script>
+</body>
+</html>

@@ -136,6 +136,5 @@ function autoplayQuiz(categoryId) {
 
 
 function editCategory(categoryId) {
-    alert(`Edit category ID: ${categoryId}`);
-    window.location.href = `edit-category.html?categoryId=${categoryId}`;
+    window.location.href = `edit.html?categoryID=${categoryId}`;
 }
