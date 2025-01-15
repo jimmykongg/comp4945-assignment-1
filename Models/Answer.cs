@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Text.Json.Serialization;
 
 namespace QuizApp.Models;
 
@@ -12,6 +11,6 @@ public partial class Answer
     public string Description { get; set; } = null!;
 
     public bool RightAnswer { get; set; }
-
-    public virtual Quiz Quiz { get; set; } = null!;
+    
+    public virtual Quiz? Quiz { get; set; }
 }

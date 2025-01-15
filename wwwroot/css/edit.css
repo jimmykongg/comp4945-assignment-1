@@ -1,0 +1,60 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f9;
+    margin: 0;
+    padding: 20px;
+}
+
+h1 {
+    text-align: center;
+}
+
+.quiz-list {
+    max-width: 800px;
+    margin: auto;
+    padding: 10px;
+}
+
+.quiz-card {
+    background-color: white;
+    margin-bottom: 20px;
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.button-group {
+    display: flex;
+    justify-content: space-between;
+}
+
+button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.edit-btn {
+    background-color: #2196f3;
+    color: white;
+}
+
+.delete-btn {
+    background-color: #e74c3c;
+    color: white;
+}
+
+.upload-btn {
+    display: block;
+    margin: 20px auto;
+    background-color: #4caf50;
+    color: white;
+}
+
+.back-btn {
+    display: block;
+    margin: 10px auto;
+    background-color: #555;
+    color: white;
+}

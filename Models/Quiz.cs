@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Text.Json.Serialization;
 
 namespace QuizApp.Models;
 
@@ -13,9 +12,10 @@ public partial class Quiz
 
     public int CategoryId { get; set; }
 
+    
     public virtual ICollection<Answer> Answers { get; set; } = new List<Answer>();
-
-    public virtual Category Category { get; set; } = null!;
-
+    
+    public virtual Category? Category { get; set; }
+    
     public virtual Medium? Media { get; set; }
 }
