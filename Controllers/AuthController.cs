@@ -26,9 +26,9 @@ public class AuthController : ControllerBase
     [HttpPost("signup")]
     public async Task<IActionResult> SignUp([FromBody] AppUser req)
     {
-        if (req.Username == null || req.Password == null)
+        if (req.Username == null || req.Password == null || req.Role == null)
         {
-            return BadRequest("Username and/or password are invalid. Try again.");
+            return BadRequest("Username, password, and role are required.");
         }
         
         if (await _context.AppUsers.AnyAsync(u => u.Username == req.Username))
@@ -37,8 +37,6 @@ public class AuthController : ControllerBase
         }
         
         req.Password = HashPassword(req.Password);
-        req.Role = "general";
-        
         _context.AppUsers.Add(req);
         await _context.SaveChangesAsync();
         
