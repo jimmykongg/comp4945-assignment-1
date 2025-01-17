@@ -11,9 +11,10 @@ document.addEventListener("DOMContentLoaded", async function () {
 
     document.getElementById("welcome-message").innerText = `Welcome, ${username} (${role})!`;
 
-    // Show "Create New Category" button for admin users
+    // Show "Create New Category" and "Create New Room" buttons for admin users
     if (role === "admin") {
         setupCreateCategoryButton();
+        setupCreateRoomButton();
     }
 
     try {
@@ -96,6 +97,18 @@ async function fetchCategories(token, role) {
         const card = createCategoryCard(category, role);
         categoryList.appendChild(card);
     });
+
+    // Populate category selection dropdown
+    const categorySelect = document.getElementById("category-select");
+    categories.forEach(category => {
+        const option = document.createElement("option");
+        option.value = category.id;
+        option.innerText = category.name;
+        categorySelect.appendChild(option);
+    });
+
+    // Display the category select dropdown
+    categorySelect.style.display = "block";
 }
 
 function createCategoryCard(category, role) {
@@ -155,40 +168,52 @@ function createRoomCard(room) {
 
 function setupCreateRoomButton() {
     const createRoomBtn = document.getElementById("create-room-btn");
+    const categorySelect = document.getElementById("category-select");
+
+    createRoomBtn.style.display = "block";  // Show the button for admins
+
+    // Initially hide the dropdown
+    categorySelect.style.display = "block";
+
     createRoomBtn.addEventListener("click", () => {
+        // Check if a category is selected
+        const categoryID = categorySelect.value;
         const roomName = prompt("Enter the name of the new room:");
-        if (!roomName || roomName.trim() === "") {
-            alert("Room name cannot be empty.");
+
+        if (!roomName || roomName.trim() === "" || !categoryID) {
+            alert("Both room name and category must be selected.");
             return;
         }
 
-        createRoom(roomName.trim());
+        createRoom(categoryID, roomName.trim());
     });
 }
 
-async function createRoom(roomName) {
+async function createRoom(categoryID, roomName) {
     const token = localStorage.getItem("authToken");
-
     try {
-        const response = await fetch("/api/quizrooms", {
+        const response = await fetch("/createRoom", {
             method: "POST",
             headers: {
                 "Authorization": `Bearer ${token}`,
-                "Content-Type": "application/json"
+                "Content-Type": "application/x-www-form-urlencoded", // For form-like data
             },
-            body: JSON.stringify({ name: roomName })
+            body: new URLSearchParams({
+                'category': categoryID,
+                'roomID': roomName,
+            }),
         });
 
-        if (response.ok) {
-            alert("Room created successfully!");
-            window.location.href = `create-room.html?roomName=${roomName}`;  // Redirect to create-room.html with room name
-        } else {
-            const error = await response.text();
-            alert(`Error: ${error}`);
+        if (!response.ok) {
+            throw new Error('Failed to create room');
         }
+
+        // Redirect to the newly created room (based on your servlet logic)
+        const roomURL = `/quizRoom?categoryID=${categoryID}&roomID=${roomName}`;
+        window.location.href = roomURL;
     } catch (error) {
-        console.error("Error:", error);
-        alert("Failed to create room. Please try again.");
+        console.error('Error creating room:', error);
+        alert('Error creating room. Please try again later.');
     }
 }
 

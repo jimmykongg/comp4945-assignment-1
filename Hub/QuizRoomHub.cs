@@ -47,10 +47,24 @@ namespace QuizApp.Hubs
             await Clients.Group(roomName).SendAsync("UserLeft", username);
         }
 
+        // Admin-only method to create a new room
+        public async Task CreateRoom(string roomName, string adminUsername)
+        {
+            if (!_quizRooms.ContainsKey(roomName))
+            {
+                _quizRooms[roomName] = new List<string> { adminUsername };
+                await Clients.Caller.SendAsync("RoomCreated", roomName);
+                await Clients.All.SendAsync("RoomListUpdated", _quizRooms.Keys);
+            }
+            else
+            {
+                await Clients.Caller.SendAsync("RoomCreationFailed", "Room already exists.");
+            }
+        }
+
         // Optional: Handle connection disconnected event
         public override async Task OnDisconnectedAsync(System.Exception exception)
         {
-            // Logic to remove the user from the room when they disconnect
             foreach (var room in _quizRooms)
             {
                 if (room.Value.Contains(Context.ConnectionId))
