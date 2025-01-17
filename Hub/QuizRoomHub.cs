@@ -6,7 +6,7 @@ namespace QuizApp.Hubs
 {
     public class QuizRoomHub : Hub
     {
-        // A dictionary to track users in each quiz room (this can be replaced with a DB or a more persistent store)
+        // A dictionary to track users by their connection ID in each quiz room
         private static Dictionary<string, List<string>> _quizRooms = new Dictionary<string, List<string>>();
 
         // When a user connects, they will join a room
@@ -17,13 +17,13 @@ namespace QuizApp.Hubs
                 _quizRooms[roomName] = new List<string>();
             }
 
-            // Add the user to the room's participant list
-            _quizRooms[roomName].Add(username);
+            // Add the user's connection ID to the room's participant list (not username)
+            _quizRooms[roomName].Add(Context.ConnectionId);
 
             // Notify all clients in the room about the new user
             await Clients.Group(roomName).SendAsync("UserJoined", username);
 
-            // Add the user to the SignalR room group
+            // Add the user to the SignalR room group (this is the SignalR "room")
             await Groups.AddToGroupAsync(Context.ConnectionId, roomName);
         }
 
@@ -38,7 +38,7 @@ namespace QuizApp.Hubs
         {
             if (_quizRooms.ContainsKey(roomName))
             {
-                _quizRooms[roomName].Remove(username);
+                _quizRooms[roomName].Remove(Context.ConnectionId);
             }
 
             await Groups.RemoveFromGroupAsync(Context.ConnectionId, roomName);
@@ -53,10 +53,10 @@ namespace QuizApp.Hubs
             // Logic to remove the user from the room when they disconnect
             foreach (var room in _quizRooms)
             {
-                var user = room.Value.Find(u => u == Context.ConnectionId);
-                if (user != null)
+                if (room.Value.Contains(Context.ConnectionId))
                 {
-                    await LeaveRoom(room.Key, user);
+                    // You can remove the user from the room based on their connection ID
+                    await LeaveRoom(room.Key, "Unknown"); // Placeholder for username
                 }
             }
 
