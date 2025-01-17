@@ -1,141 +1,101 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using QuizApp.Models;
 using System.Linq;
 using System.Threading.Tasks;
-using QuizApp.Models;
 
-namespace QuizApp.Controllers;
-
-[ApiController]
-[Route("api/[controller]")]
-public class QuizController : ControllerBase
+namespace QuizApp.Controllers
 {
-    private readonly PostgresContext _context;
-
-    public QuizController(PostgresContext context)
+    [ApiController]
+    [Route("api/[controller]")]
+    public class QuizController : ControllerBase
     {
-        _context = context;
-    }
+        private readonly PostgresContext _context;
 
-    // Example: api/quiz/category/1 returns all questions and answers in category 1
-    [HttpGet("category/{categoryId}")]
-    public async Task<IActionResult> GetQuestionsByCategory(int categoryId)
-    {
-        var quizzes = await _context.Quizzes
-            .Where(q => q.CategoryId == categoryId)
-            .OrderBy(q => q.Id)
-            .Include(q => q.Answers)
-            .ToListAsync();
-
-        if (quizzes == null)
+        public QuizController(PostgresContext context)
         {
-            return NotFound(new { message = "No quizzes found for the given category." });
+            _context = context;
         }
 
-        return Ok(quizzes.Select(quiz => new
+        // Get quizzes by category
+        [HttpGet("category/{categoryId}")]
+        public async Task<IActionResult> GetQuizzesByCategory(int categoryId)
         {
-            Description = quiz.Description,
-            Id = quiz.Id,
-            Answers = quiz.Answers.Select(a => new
+            var quizzes = await _context.Quizzes
+                .Where(q => q.CategoryId == categoryId)
+                .OrderBy(q => q.Id)
+                .Include(q => q.Answers)
+                .ToListAsync();
+
+            if (!quizzes.Any())
             {
-                AnswerId = a.Id,
-                Description = a.Description,
-                IsCorrect = a.RightAnswer
-            })
-        }));
-    }
-    
-    [HttpPost("add/{categoryId}")]
-    public async Task<IActionResult> AddQuizWithAnswers(int categoryId, [FromBody] Quiz request)
-    {
-        // Check if the category exists
-        var categoryExists = await _context.Categories.AnyAsync(c => c.Id == categoryId);
-        if (!categoryExists)
-        {
-            return NotFound(new { message = "Category not found." });
-        }
+                return NotFound(new { message = "No quizzes found for this category." });
+            }
 
-
-        // Step 1: Create the quiz
-        var newQuiz = new Quiz
-        {
-            Description = request.Description,
-            CategoryId = categoryId
-        };
-
-        _context.Quizzes.Add(newQuiz);
-        await _context.SaveChangesAsync();  // Save quiz and get the generated QuizId
-
-        // Step 2: Assign QuizId to each answer and add answers
-        foreach (var answer in request.Answers)
-        {
-            answer.QuizId = newQuiz.Id;  // Assign the newly created QuizId
-        }
-
-        _context.Answers.AddRange(request.Answers);
-        await _context.SaveChangesAsync();  // Save answers in one go
-
-        return Ok(new { message = "Quiz and answers added successfully!" });
-    }
-    
-    // delete a quiz and answers
-    [HttpDelete("delete/{quizId}")]
-    public async Task<IActionResult> DeleteQuiz(int quizId)
-    {
-        // Retrieve the quiz with its answers
-        var quiz = await _context.Quizzes
-            .Include(q => q.Answers)  // Include related answers
-            .FirstOrDefaultAsync(q => q.Id == quizId);
-
-        if (quiz == null)
-        {
-            return NotFound(new { message = "Quiz not found." });
-        }
-
-        // Remove all related answers
-        _context.Answers.RemoveRange(quiz.Answers);
-
-        // Remove the quiz
-        _context.Quizzes.Remove(quiz);
-    
-        await _context.SaveChangesAsync();  // Save changes to the database
-
-        return Ok(new { message = "Quiz deleted successfully." });
-    }
-    
-    [HttpPut("update/{quizId}")]
-    public async Task<IActionResult> UpdateQuiz(int quizId, [FromBody] Quiz request)
-    {
-        // Find the quiz and include related answers
-        var existingQuiz = await _context.Quizzes
-            .Include(q => q.Answers)
-            .FirstOrDefaultAsync(q => q.Id == quizId);
-
-        if (existingQuiz == null)
-        {
-            return NotFound(new { message = "Quiz not found." });
-        }
-        
-        // Update quiz description
-        existingQuiz.Description = request.Description;
-
-        // Clear the old answers and add updated answers
-        _context.Answers.RemoveRange(existingQuiz.Answers);
-        foreach (var answer in request.Answers)
-        {
-            _context.Answers.Add(new Answer
+            var quizData = quizzes.Select(q => new
             {
-                QuizId = quizId,
-                Description = answer.Description,
-                RightAnswer = answer.RightAnswer
+                q.Id,
+                q.Description,
+                Answers = q.Answers.Select(a => new
+                {
+                    a.Id,
+                    a.Description,
+                    a.RightAnswer
+                }).ToList()
             });
+
+            return Ok(quizData);
         }
 
-        await _context.SaveChangesAsync();
+        // Add a new quiz with answers
+        [HttpPost("add/{categoryId}")]
+        public async Task<IActionResult> AddQuiz(int categoryId, [FromBody] Quiz request)
+        {
+            var categoryExists = await _context.Categories.AnyAsync(c => c.Id == categoryId);
+            if (!categoryExists)
+            {
+                return NotFound(new { message = "Category not found." });
+            }
 
-        return Ok(new { message = "Quiz updated successfully!" });
+            var newQuiz = new Quiz
+            {
+                Description = request.Description,
+                CategoryId = categoryId
+            };
+
+            _context.Quizzes.Add(newQuiz);
+            await _context.SaveChangesAsync(); // Save quiz and get generated QuizId
+
+            foreach (var answer in request.Answers)
+            {
+                answer.QuizId = newQuiz.Id;
+            }
+
+            _context.Answers.AddRange(request.Answers);
+            await _context.SaveChangesAsync(); // Save answers in one go
+
+            return Ok(new { message = "Quiz added successfully." });
+        }
+
+        // Delete a quiz (including answers)
+        [HttpDelete("delete/{quizId}")]
+        public async Task<IActionResult> DeleteQuiz(int quizId)
+        {
+            var quiz = await _context.Quizzes
+                .Include(q => q.Answers)
+                .FirstOrDefaultAsync(q => q.Id == quizId);
+
+            if (quiz == null)
+            {
+                return NotFound(new { message = "Quiz not found." });
+            }
+
+            _context.Answers.RemoveRange(quiz.Answers); // Remove related answers
+            _context.Quizzes.Remove(quiz); // Remove quiz
+
+            await _context.SaveChangesAsync();
+
+            return Ok(new { message = "Quiz deleted successfully." });
+        }
     }
-
-
-
 }

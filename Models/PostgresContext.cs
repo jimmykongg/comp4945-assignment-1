@@ -20,6 +20,8 @@ public partial class PostgresContext : DbContext
     public virtual DbSet<AppUser> AppUsers { get; set; }
 
     public virtual DbSet<Category> Categories { get; set; }
+    
+    public virtual DbSet<QuizRoom> QuizRooms { get; set; }
 
     public virtual DbSet<Medium> Media { get; set; }
 

@@ -1,8 +1,3 @@
-/**
- * The Main Work flow of home page.
- * Getting categories from backend and displaying them in cards
- * For Admin user, shows the Add Category button
- */
 document.addEventListener("DOMContentLoaded", async function () {
     const token = localStorage.getItem("authToken");
     const username = localStorage.getItem("username");
@@ -24,9 +19,12 @@ document.addEventListener("DOMContentLoaded", async function () {
     try {
         // Fetch and display categories
         await fetchCategories(token, role);
+
+        // Fetch and display rooms
+        await fetchRooms(token);
     } catch (error) {
         console.error("Error:", error);
-        alert("Error loading categories. Please try again.");
+        alert("Error loading categories or rooms. Please try again.");
     }
 
     // Logout functionality
@@ -35,7 +33,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 
 /**
- * Helper Functions
+ * Helper Functions for Categories
  */
 function setupCreateCategoryButton() {
     const createCategoryBtn = document.getElementById("create-category-btn");
@@ -115,6 +113,114 @@ function createCategoryCard(category, role) {
     return card;
 }
 
+
+/**
+ * Helper Functions for Rooms
+ */
+async function fetchRooms(token) {
+    const response = await fetch("/api/quizrooms", {
+        method: "GET",
+        headers: {
+            "Authorization": `Bearer ${token}`,
+            "Content-Type": "application/json"
+        }
+    });
+
+    if (!response.ok) {
+        throw new Error("Failed to fetch rooms.");
+    }
+
+    const rooms = await response.json();  // Array of rooms [{ id, name }, ...]
+    const roomList = document.getElementById("room-list");
+    roomList.innerHTML = "";  // Clear the list
+
+    rooms.forEach(room => {
+        const roomCard = createRoomCard(room);
+        roomList.appendChild(roomCard);
+    });
+}
+
+function createRoomCard(room) {
+    const card = document.createElement("div");
+    card.classList.add("room-card");
+
+    card.innerHTML = `
+        <h4>${room.name}</h4>
+        <div class="button-group">
+            <button class="join-btn" onclick="joinRoom(${room.id})">Join Room</button>
+        </div>
+    `;
+    return card;
+}
+
+function setupCreateRoomButton() {
+    const createRoomBtn = document.getElementById("create-room-btn");
+    createRoomBtn.addEventListener("click", () => {
+        const roomName = prompt("Enter the name of the new room:");
+        if (!roomName || roomName.trim() === "") {
+            alert("Room name cannot be empty.");
+            return;
+        }
+
+        createRoom(roomName.trim());
+    });
+}
+
+async function createRoom(roomName) {
+    const token = localStorage.getItem("authToken");
+
+    try {
+        const response = await fetch("/api/quizrooms", {
+            method: "POST",
+            headers: {
+                "Authorization": `Bearer ${token}`,
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ name: roomName })
+        });
+
+        if (response.ok) {
+            alert("Room created successfully!");
+            window.location.href = `create-room.html?roomName=${roomName}`;  // Redirect to create-room.html with room name
+        } else {
+            const error = await response.text();
+            alert(`Error: ${error}`);
+        }
+    } catch (error) {
+        console.error("Error:", error);
+        alert("Failed to create room. Please try again.");
+    }
+}
+
+async function joinRoom(roomId) {
+    const token = localStorage.getItem("authToken");
+
+    try {
+        const response = await fetch(`/api/quizrooms/${roomId}/join`, {
+            method: "POST",
+            headers: {
+                "Authorization": `Bearer ${token}`,
+                "Content-Type": "application/json"
+            }
+        });
+
+        if (response.ok) {
+            alert("Joined the room successfully!");
+            window.location.href = `join-room.html?roomId=${roomId}`;  // Redirect to join-room.html with room ID
+        } else {
+            const error = await response.text();
+            alert(`Error: ${error}`);
+        }
+    } catch (error) {
+        console.error("Error:", error);
+        alert("Failed to join the room. Please try again.");
+    }
+}
+
+
+/**
+ * Logout functionality
+ */
 function setupLogoutButton() {
     const logoutBtn = document.getElementById("logout");
     logoutBtn.addEventListener("click", () => {
@@ -125,15 +231,12 @@ function setupLogoutButton() {
 
 // Placeholder functions for quiz actions
 function playQuiz(categoryId) {
-    // Redirect to quiz.html with autoplay set to false
     window.location.href = `quiz.html?categoryID=${categoryId}&autoplay=false`;
 }
 
 function autoplayQuiz(categoryId) {
-    // Redirect to quiz.html with autoplay set to true
     window.location.href = `quiz.html?categoryID=${categoryId}&autoplay=true`;
 }
-
 
 function editCategory(categoryId) {
     window.location.href = `edit.html?categoryID=${categoryId}`;

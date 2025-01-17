@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz App - Lobby</title>
+    <link rel="stylesheet" href="../css/home.css">
+</head>
+<body>
+<div id="content" class="main-content">
+    <h1>Welcome to the Quiz App!</h1>
+    <p id="welcome-message"></p>
+
+    <!-- Admin-only "Create New Room" button -->
+    <button id="create-room-btn" style="display: none;" onclick="location.href='create-room.html'">+ Create New Room</button>
+
+    <!-- List of available quiz rooms -->
+    <h2>Available Rooms</h2>
+    <div id="room-list" class="room-container">
+        <!-- Rooms will be dynamically added here by JavaScript -->
+    </div>
+
+    <button id="logout">Logout</button>
+</div>
+
+<!-- External JavaScript File -->
+<script src="../js/home.js"></script>
+</body>
+</html>
