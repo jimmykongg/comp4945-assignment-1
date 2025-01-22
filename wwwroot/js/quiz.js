@@ -13,6 +13,7 @@ document.addEventListener("DOMContentLoaded", async function () {
     const quizContainer = document.getElementById("quiz-container");
     const questionText = document.getElementById("question-text");
     const answersContainer = document.getElementById("answers-container");
+    const mediaContainer = document.getElementById("media-container");
     const nextBtn = document.getElementById("next-btn");
     const quitBtn = document.getElementById("quit-btn");
 
@@ -30,9 +31,7 @@ document.addEventListener("DOMContentLoaded", async function () {
             throw new Error("Failed to load quiz questions.");
         }
 
-        console.log("response is ok");
-        const questions = await response.json();  // Array of questions with answers
-        console.log(questions);
+        const questions = await response.json();
         let currentQuestionIndex = 0;
 
         if (questions.length === 0) {
@@ -45,7 +44,6 @@ document.addEventListener("DOMContentLoaded", async function () {
         displayQuestion(currentQuestionIndex, questions);
 
         if (autoplay) {
-            // Autoplay mode
             let autoplayInterval = setInterval(() => {
                 currentQuestionIndex++;
                 if (currentQuestionIndex < questions.length) {
@@ -55,9 +53,8 @@ document.addEventListener("DOMContentLoaded", async function () {
                     alert("Quiz completed!");
                     window.location.href = "home.html";
                 }
-            }, 5000);  // Change question every 5 seconds
+            }, 5000);
         } else {
-            // Normal mode: Handle "Next" button
             nextBtn.style.display = "block";
             nextBtn.addEventListener("click", () => {
                 currentQuestionIndex++;
@@ -83,11 +80,9 @@ document.addEventListener("DOMContentLoaded", async function () {
 
     function displayQuestion(index, questions) {
         const question = questions[index];
-        const questionText = document.getElementById("question-text");
-        const answersContainer = document.getElementById("answers-container");
-
         questionText.innerText = `Q${index + 1}: ${question.description}`;
-        answersContainer.innerHTML = "";  // Clear previous answers
+        answersContainer.innerHTML = ""; // Clear previous answers
+        mediaContainer.innerHTML = ""; // Clear previous media content
 
         question.answers.forEach(answer => {
             const answerBtn = document.createElement("button");
@@ -95,13 +90,12 @@ document.addEventListener("DOMContentLoaded", async function () {
             answerBtn.innerText = answer.description;
 
             if (!autoplay) {
-                // **Normal mode: User selects an answer manually**
                 answerBtn.addEventListener("click", () => {
-                    if (answer.isCorrect) {
-                        answerBtn.style.backgroundColor = "green";  // Correct answer
+                    if (answer.rightAnswer) {
+                        answerBtn.style.backgroundColor = "green"; // Correct answer
                         alert("Correct answer!");
                     } else {
-                        answerBtn.style.backgroundColor = "red";  // Incorrect answer
+                        answerBtn.style.backgroundColor = "red"; // Incorrect answer
                         alert("Incorrect. Try again!");
                     }
                 });
@@ -110,24 +104,49 @@ document.addEventListener("DOMContentLoaded", async function () {
             answersContainer.appendChild(answerBtn);
         });
 
+        if (question.media) {
+            const { mediaType, filePath } = question.media;
+
+            mediaContainer.style.display = "block";
+
+            if (mediaType === "image") {
+                const img = document.createElement("img");
+                img.src = filePath;
+                img.alt = "Quiz Media";
+                img.style.maxWidth = "100%";
+                mediaContainer.appendChild(img);
+            } else if (mediaType === "video") {
+                const iframe = document.createElement("iframe");
+                iframe.src = `https://www.youtube.com/embed/${filePath}`;
+                iframe.width = "560";
+                iframe.height = "315";
+                iframe.title = "YouTube video player";
+                iframe.frameBorder = "0";
+                iframe.allow = "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture";
+                iframe.allowFullscreen = true;
+                mediaContainer.appendChild(iframe);
+            }
+        } else {
+            mediaContainer.style.display = "none";
+        }
+
         if (autoplay) {
-            // **Autoplay mode: Highlight correct answer after 2 seconds**
-            disableAllButtons();  // Disable user interaction
+            disableAllButtons();
             setTimeout(() => {
                 const correctAnswerBtn = Array.from(answersContainer.children).find(btn => {
-                    return questions[index].answers.find(a => a.description === btn.innerText && a.isCorrect);
+                    return questions[index].answers.find(a => a.description === btn.innerText && a.rightAnswer);
                 });
                 if (correctAnswerBtn) {
-                    correctAnswerBtn.style.backgroundColor = "green";  // Highlight correct answer
+                    correctAnswerBtn.style.backgroundColor = "green";
                 }
-            }, 2000);  // Highlight correct answer after 2 seconds
+            }, 2000);
         }
     }
 
     function disableAllButtons() {
         const answerButtons = document.querySelectorAll(".answer-btn");
         answerButtons.forEach(btn => {
-            btn.disabled = true;  // Disable all buttons to prevent multiple clicks
+            btn.disabled = true;
         });
     }
 });

@@ -41,6 +41,20 @@
             </select>
         </div>
 
+        <h2>Media (Optional)</h2>
+        <label for="media-type">Media Type</label>
+        <select id="media-type" name="media-type">
+            <option value="">None</option>
+            <option value="image">Image</option>
+            <option value="video">Video</option>
+        </select>
+
+        <label for="media-file">Upload Media File</label>
+        <input type="file" id="media-file" accept="image/*,video/*">
+
+        <label for="youtube-link">YouTube Video ID</label>
+        <input type="text" id="youtube-link" placeholder="Enter YouTube Video ID (e.g., RRubcjpTkks)">
+
         <button type="submit" class="submit-btn">Submit</button>
         <button type="button" class="cancel-btn" id="cancel-btn">Cancel</button>
     </form>
