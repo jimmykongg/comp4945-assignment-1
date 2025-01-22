@@ -7,25 +7,41 @@
     <link rel="stylesheet" href="../css/editQuiz.css">
 </head>
 <body>
+<div id="existing-media-container" style="display: none;">
+    <h2>Existing Media</h2>
+    <div id="existing-media"></div>
+</div>
 
-<!-- Multiple-choice form -->
 <form id="multiple-choice-form" style="display: none;">
     <label for="description-mc">Question Description:</label>
     <textarea id="description-mc" name="description" required></textarea>
 
     <label for="correct-answer">Correct Answer:</label>
-    <input type="text" id="correct-answer" placeholder="Correct Answer" required>
+    <input type="text" id="correct-answer" required>
 
     <label for="incorrect-answer-1">Incorrect Answers:</label>
-    <input type="text" id="incorrect-answer-1" placeholder="Incorrect Answer 1" required>
-    <input type="text" id="incorrect-answer-2" placeholder="Incorrect Answer 2" required>
-    <input type="text" id="incorrect-answer-3" placeholder="Incorrect Answer 3" required>
+    <input type="text" id="incorrect-answer-1" required>
+    <input type="text" id="incorrect-answer-2" required>
+    <input type="text" id="incorrect-answer-3" required>
+
+    <h2>Update Media (Optional)</h2>
+    <label for="media-type-mc">Media Type:</label>
+    <select id="media-type-mc">
+        <option value="">None</option>
+        <option value="image">Image</option>
+        <option value="video">Video</option>
+    </select>
+
+    <label for="media-file-mc">Upload New Media File:</label>
+    <input type="file" id="media-file-mc" accept="image/*,video/*">
+
+    <label for="youtube-link-mc">YouTube Video ID:</label>
+    <input type="text" id="youtube-link-mc" placeholder="Enter YouTube Video ID (e.g., RRubcjpTkks)">
 
     <button type="submit" class="btn">Save Changes</button>
     <button type="button" id="cancel-btn" class="btn">Cancel</button>
 </form>
 
-<!-- True/false form -->
 <form id="true-false-form" style="display: none;">
     <label for="description-tf">Question Description:</label>
     <textarea id="description-tf" name="description" required></textarea>
@@ -36,9 +52,24 @@
         <option value="false">False</option>
     </select>
 
+    <h2>Update Media (Optional)</h2>
+    <label for="media-type-tf">Media Type:</label>
+    <select id="media-type-tf">
+        <option value="">None</option>
+        <option value="image">Image</option>
+        <option value="video">Video</option>
+    </select>
+
+    <label for="media-file-tf">Upload New Media File:</label>
+    <input type="file" id="media-file-tf" accept="image/*,video/*">
+
+    <label for="youtube-link-tf">YouTube Video ID:</label>
+    <input type="text" id="youtube-link-tf" placeholder="Enter YouTube Video ID (e.g., RRubcjpTkks)">
+
     <button type="submit" class="btn">Save Changes</button>
     <button type="button" id="cancel-btn-tf" class="btn">Cancel</button>
 </form>
-</body>
+
 <script src="../js/editQuiz.js"></script>
+</body>
 </html>

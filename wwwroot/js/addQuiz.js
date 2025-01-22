@@ -20,9 +20,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Handle form submission
     form.addEventListener("submit", async function (event) {
-        event.preventDefault();  // Prevent page reload
+        event.preventDefault(); // Prevent page reload
+
         const questionType = questionTypeSelect.value;
         const description = document.getElementById("description").value.trim();
+        const mediaType = document.getElementById("media-type").value.trim();
+        const mediaFile = document.getElementById("media-file").files[0];
+        const youtubeLink = document.getElementById("youtube-link")?.value.trim();
         let answers = [];
 
         if (!description) {
@@ -31,41 +35,49 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         if (questionType === "multiple-choice") {
-            // Collect multiple choice answers
             const correctAnswer = document.getElementById("correct-answer").value.trim();
             const incorrectAnswers = [
                 document.getElementById("incorrect-answer-1").value.trim(),
                 document.getElementById("incorrect-answer-2").value.trim(),
-                document.getElementById("incorrect-answer-3").value.trim()
+                document.getElementById("incorrect-answer-3").value.trim(),
             ];
 
-            if (!correctAnswer || incorrectAnswers.some(answer => !answer)) {
+            if (!correctAnswer || incorrectAnswers.some((answer) => !answer)) {
                 alert("All answer fields must be filled.");
                 return;
             }
 
             answers.push({ Description: correctAnswer, RightAnswer: true });
-            incorrectAnswers.forEach(answer => answers.push({ Description: answer, RightAnswer: false }));
+            incorrectAnswers.forEach((answer) =>
+                answers.push({ Description: answer, RightAnswer: false })
+            );
         } else {
-            // Collect true/false answer
             const trueFalseAnswer = document.getElementById("true-false-answer").value === "true";
             answers.push({ Description: "True", RightAnswer: trueFalseAnswer });
             answers.push({ Description: "False", RightAnswer: !trueFalseAnswer });
         }
 
-        console.log("Request Body:")
-        console.log(categoryId)
-        console.log(description)
-        console.log(answers);
-        // Send POST request to backend
+        const formData = new FormData();
+        formData.append("Description", description);
+
+        // Add answers as a serialized JSON string
+        formData.append("Answers", JSON.stringify(answers));
+
+        if (mediaFile) {
+            formData.append("MediaFile", mediaFile);
+            formData.append("MediaType", mediaType);
+        }
+        if (youtubeLink && mediaType === "video") {
+            formData.append("YouTubeLink", youtubeLink);
+        }
+
         try {
             const response = await fetch(`/api/quiz/add/${categoryId}`, {
                 method: "POST",
                 headers: {
-                    "Authorization": `Bearer ${token}`,
-                    "Content-Type": "application/json"
+                    Authorization: `Bearer ${token}`,
                 },
-                body: JSON.stringify({ Description: description, Answers: answers })
+                body: formData,
             });
 
             if (response.ok) {
