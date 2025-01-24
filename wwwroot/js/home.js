@@ -15,6 +15,9 @@ document.addEventListener("DOMContentLoaded", async function () {
     }
 
     document.getElementById("welcome-message").innerText = `Welcome, ${username} (${role})!`;
+    document.getElementById("lobby-btn").addEventListener("click", async () => {
+        window.location.href = "lobby.html";
+    })
 
     // Show "Create New Category" button for admin users
     if (role === "admin") {
@@ -105,13 +108,16 @@ function createCategoryCard(category, role) {
     card.classList.add("category-card");
 
     card.innerHTML = `
-        <h3>${category.name}</h3>
-        <div class="button-group">
-            <button class="play-btn" onclick="playQuiz(${category.id})">Play</button>
-            <button class="autoplay-btn" onclick="autoplayQuiz(${category.id})">Autoplay</button>
-            ${role === "admin" ? `<button class="edit-btn" onclick="editCategory(${category.id})">Edit</button>` : ''}
-        </div>
-    `;
+    <h3>${category.name}</h3>
+    <div class="button-group">
+        <button class="play-btn" onclick="playQuiz(${category.id})">Play</button>
+        <button class="autoplay-btn" onclick="autoplayQuiz(${category.id})">Autoplay</button>
+        ${role === "admin" ? `
+            <button class="edit-btn" onclick="editCategory(${category.id})">Edit</button>
+            <button class="quizroom-btn" onclick="createQuizRoom(${category.id})">Quiz Room</button>
+        ` : ''}
+    </div>
+`;
     return card;
 }
 
@@ -134,7 +140,10 @@ function autoplayQuiz(categoryId) {
     window.location.href = `quiz.html?categoryID=${categoryId}&autoplay=true`;
 }
 
-
 function editCategory(categoryId) {
     window.location.href = `edit.html?categoryID=${categoryId}`;
+}
+
+function createQuizRoom(categoryId) {
+    window.location.href = `quizRoomAdmin.html?categoryID=${categoryId}`;
 }

@@ -1,7 +1,9 @@
 using System.Text;
+using Microsoft.AspNetCore.WebSockets;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using QuizApp.Models;
+using QuizApp.WebSocketHandlers;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -27,19 +29,30 @@ builder.Services.AddAuthentication("Bearer")
         };
     });
 
+builder.Services.AddWebSockets(options =>
+{
+    options.KeepAliveInterval = TimeSpan.FromSeconds(30);
+});
+
+builder.Services.AddSingleton<QuizRoomManager>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 
 app.UseHttpsRedirection();
-
 app.UseDefaultFiles();
 app.UseStaticFiles();
-
 app.UseRouting();
-
 app.UseAuthorization();
-
+app.UseWebSockets();
+app.Use(async (context, next) =>
+{
+    if (context.WebSockets.IsWebSocketRequest)
+    {
+        Console.WriteLine("Incoming WebSocket request.");
+    }
+    await next();
+});
 app.MapControllers();
-
 app.Run();

@@ -47,6 +47,7 @@ public class AuthController : ControllerBase
     [HttpPost("login")]
     public async Task<IActionResult> Login([FromBody] AppUser req)
     {
+        Console.WriteLine("Login");
         var user = await _context.AppUsers.SingleOrDefaultAsync(u => u.Username == req.Username);
 
         if (user == null || !VerifyPassword(req.Password, user.Password))
