@@ -117,7 +117,7 @@ document.addEventListener("DOMContentLoaded", async function () {
                 mediaContainer.appendChild(img);
             } else if (mediaType === "video") {
                 const iframe = document.createElement("iframe");
-                iframe.src = `https://www.youtube.com/embed/${filePath}`;
+                iframe.src = `https://www.youtube.com/embed/${filePath}?autoplay=1&mute=1&enablejsapi=1`;
                 iframe.width = "560";
                 iframe.height = "315";
                 iframe.title = "YouTube video player";

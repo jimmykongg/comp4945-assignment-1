@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Room - Admin</title>
+    <link rel="stylesheet" href="../css/quizRoomAdmin.css">
+</head>
+<body>
+<div class="quiz-room-container">
+    <header>
+        <h1>Quiz Room - Admin</h1>
+    </header>
+
+    <main>
+        <!-- Sidebar for participant list -->
+        <aside id="admin-sidebar" class="sidebar">
+            <h2>Participants</h2>
+            <ul id="participant-list">
+                <!-- Participant names will be dynamically added here -->
+            </ul>
+        </aside>
+
+        <!-- Main quiz area -->
+        <section id="quiz-container" class="quiz-area">
+            <h2 id="quiz-description">Question Description</h2>
+            <div id="quiz-media" class="media-container" style="display: none;">
+                <img id="media-image" src="" alt="Question media">
+                <div id="media-video" style="display: none;">
+                </div>
+            </div>
+            <div id="quiz-answers" class="answers">
+                <!-- Answer options will be dynamically added here -->
+            </div>
+        </section>
+    </main>
+
+    <!-- Admin controls -->
+    <footer id="admin-controls" class="controls">
+        <button id="reveal-answer-btn" class="btn">Reveal Answer</button>
+        <button id="next-question-btn" class="btn">Next Question</button>
+    </footer>
+</div>
+
+<script src="../js/quizRoomAdmin.js"></script>
+</body>
+</html>

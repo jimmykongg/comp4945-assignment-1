@@ -1,0 +1,140 @@
+/* General container styling */
+.quiz-room-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+/* Header */
+header {
+    width: 100%;
+    background-color: #4caf50;
+    color: white;
+    text-align: center;
+    padding: 1em 0;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Sidebar for participants */
+.sidebar {
+    position: fixed;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 20%;
+    background-color: #f4f4f4;
+    padding: 1em;
+    overflow-y: auto;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+}
+
+.sidebar h2 {
+    margin-top: 0;
+    font-size: 1.5em;
+    color: #333;
+}
+
+.sidebar ul {
+    list-style: none;
+    padding: 0;
+}
+
+.sidebar ul li {
+    padding: 0.5em 0;
+    border-bottom: 1px solid #ddd;
+}
+
+/* Quiz area */
+.quiz-area {
+    margin-left: 22%;
+    width: 75%;
+    padding: 1em;
+}
+
+.quiz-area h2 {
+    font-size: 1.8em;
+    color: #333;
+    margin-bottom: 0.5em;
+}
+
+.answers {
+    display: flex;
+    flex-direction: column;
+    gap: 1em;
+    margin-top: 1em;
+}
+
+.answer-item {
+    background-color: #f9f9f9;
+    padding: 1em;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: background-color 0.3s ease;
+}
+
+.answer-item:hover {
+    background-color: #f1f1f1;
+}
+
+.answer-item.selected {
+    background-color: #d4edda;
+    border-color: #c3e6cb;
+    color: #155724;
+}
+
+/* Media container */
+.media-container {
+    margin-top: 1em;
+    text-align: center;
+}
+
+#media-image {
+    #media-image {
+        max-width: 100%; /* Ensure the image fits within the container */
+        max-height: 400px; /* Constrain the image height */
+        width: auto; /* Maintain aspect ratio */
+        height: auto; /* Maintain aspect ratio */
+        border: 1px solid #ddd; /* Add a light border for visual appeal */
+        border-radius: 5px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        display: block; /* Ensure it’s displayed as a block-level element */
+        object-fit: contain; /* Make sure it adjusts properly within its boundaries */
+    }
+
+}
+
+#media-video {
+    width: 100%;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* Admin controls */
+.controls {
+    margin-top: 2em;
+    display: flex;
+    justify-content: center;
+    gap: 1em;
+}
+
+.controls .btn {
+    background-color: #4caf50;
+    color: white;
+    padding: 0.5em 1em;
+    font-size: 1em;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.controls .btn:hover {
+    background-color: #45a049;
+}
